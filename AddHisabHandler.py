@@ -8,7 +8,7 @@ from boto3.dynamodb.conditions import Key
 
 print('Loading function')
 group_table = boto3.resource('dynamodb').Table("Group")
-pattern = "%d/%m/%Y %H:%M:%S"
+pattern = "%Y-%m-%d %H:%M:%S"
 
 
 def find_by_id(group_id, created_date):
