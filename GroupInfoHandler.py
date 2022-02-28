@@ -27,24 +27,51 @@ def find_by_id(item_id):
         KeyConditionExpression=Key('id').eq(item_id)
     )
     print(f"Got response {response['Items']}")
-    return response['Items'][0]
+    if len(response["Items"]) > 0:
+        return response["Items"][0]
+    else:
+        return []
 
 
 def get_group_for_user(payload):
     username = payload['pathParameters']["username"]
     result = find_by_id(username)
     response = []
-    for group_id in result["groups"]:
-        group = find_by_id(group_id)
-        response.append({
-            'groupId': group['id'],
-            'groupName': group['name'],
+    if len(result) == 0:
+        add_user(username)
+    else:
+        for group_id in result["groups"]:
+            group = find_by_id(group_id)
+            response.append({
+                'groupId': group['id'],
+                'groupName': group['name'],
 
-        })
+            })
 
     return {
         "statusCode": 200,
         "body": json.dumps(response, cls=DecimalEncoder)
+    }
+
+
+def add_user(username):
+    print(f"Adding item to HisabIdentity table using {username}")
+
+    hisab_table.put_item(
+        Item={
+            "id": username,
+            "secondaryId": "User info",
+            "groups": [
+
+            ],
+            "createdTime": int(time.time()),
+
+        }
+    )
+
+    return {
+        "statusCode": 200,
+        "body": json.dumps("User added successfully!")
     }
 
 
