@@ -131,7 +131,6 @@ def add_group(payload):
 
 
 def handler(event, context):
-    print("Received event: " + json.dumps(event, indent=2))
     switcher = {
         "GET": get_group_for_user,
         "POST": add_group,

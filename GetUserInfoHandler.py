@@ -63,7 +63,6 @@ def add_user(payload):
 
 
 def handler(event, context):
-    print("Received event: " + json.dumps(event, indent=2))
     switcher = {
         "GET": get_user_info,
         "POST": add_user,

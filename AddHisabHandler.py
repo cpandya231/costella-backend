@@ -87,7 +87,6 @@ def add_hisab(payload):
 
 
 def handler(event, context):
-    print("Received event: " + json.dumps(event, indent=2))
     switcher = {
         "GET": get_hisab,
         "POST": add_hisab,
