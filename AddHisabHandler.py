@@ -62,7 +62,7 @@ class DecimalEncoder(json.JSONEncoder):
 def add_hisab(payload):
     body = json.loads(payload['body'])
     group_id = body['groupId']
-    print(f"Adding item to Group table using {group_id}")
+    print(f"Adding item to Group table using groupId {group_id}")
     purchase_time = datetime.datetime.utcnow().strftime(" %H:%M:%S")
     created_time = get_date_in_epoch(body["purchaseDate"], purchase_time)
     group_table.put_item(
