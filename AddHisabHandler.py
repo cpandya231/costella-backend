@@ -24,10 +24,16 @@ def find_by_month(created_date, group_id):
     return query_group_items(group_id, created_date_epoch, next_date_epoch)
 
 
-def query_group_items(group_id, created_date_epoch, next_date_epoch):
+def find_by_year(created_date, group_id):
+    created_date_epoch = get_first_date_of_year(created_date)
+    next_date_epoch = get_last_date_of_year(created_date)
+    return query_group_items(group_id, created_date_epoch, next_date_epoch)
+
+
+def query_group_items(group_id, start_date_epoch, end_date_epoch):
     response = group_table.query(
-        KeyConditionExpression=Key('groupId').eq(group_id) & Key('createdTime').between(int(created_date_epoch),
-                                                                                        int(next_date_epoch))
+        KeyConditionExpression=Key('groupId').eq(group_id) & Key('createdTime').between(int(start_date_epoch),
+                                                                                        int(end_date_epoch))
     )
     return response
 
@@ -43,9 +49,21 @@ def get_first_date_of_month(created_date):
     return return_val.timestamp()
 
 
+def get_first_date_of_year(created_date):
+    return_val = datetime.datetime.fromtimestamp(get_date_in_epoch(created_date, " 00:00:00")).replace(day=1).replace(
+        month=1)
+    return return_val.timestamp()
+
+
 def get_last_date_of_month(created_date):
     return_val = datetime.datetime.utcfromtimestamp(get_date_in_epoch(created_date, " 23:59:59")) + relativedelta(
         day=31)
+    return return_val.timestamp()
+
+
+def get_last_date_of_year(created_date):
+    return_val = datetime.datetime.utcfromtimestamp(get_date_in_epoch(created_date, " 23:59:59")) + relativedelta(
+        day=31, month=12)
     return return_val.timestamp()
 
 
@@ -55,6 +73,7 @@ def find_by_id(group_id, created_date, search_by):
     switcher = {
         "DATE": find_by_date,
         "MONTH": find_by_month,
+        "YEAR": find_by_year
     }
     func = switcher.get(search_by, find_by_date)
     response = func(created_date, group_id)
