@@ -7,7 +7,6 @@ import boto3
 from dateutil.relativedelta import relativedelta
 from boto3.dynamodb.conditions import Key
 
-print('Loading function')
 group_table = boto3.resource('dynamodb').Table("Group")
 pattern = "%Y-%m-%d %H:%M:%S"
 
@@ -68,7 +67,7 @@ def get_last_date_of_year(created_date):
 
 
 def find_by_id(group_id, created_date, search_by):
-    print(f"Finding Hisabs in Group using {group_id}")
+
     # response = find_by_date(created_date, group_id)
     switcher = {
         "DATE": find_by_date,
@@ -78,7 +77,7 @@ def find_by_id(group_id, created_date, search_by):
     func = switcher.get(search_by, find_by_date)
     response = func(created_date, group_id)
 
-    print(f"Got response  length {len(response['Items'])}")
+
     return response['Items']
 
 
@@ -88,10 +87,6 @@ def get_hisab(payload):
     search_by = ""
     if "searchBy" in payload['queryStringParameters']:
         search_by = payload['queryStringParameters']["searchBy"]
-
-    print(
-        f"Getting items from Group table using groupId: {group_id} and createdDate: {created_date} "
-        f"and searchBy:{search_by}")
     response = []
     hisab_list = find_by_id(group_id, created_date, search_by)
     for hisab in hisab_list:
@@ -119,7 +114,6 @@ class DecimalEncoder(json.JSONEncoder):
 def add_hisab(payload):
     body = json.loads(payload['body'])
     group_id = body['groupId']
-    print(f"Adding item to Group table using groupId {group_id}")
     purchase_time = datetime.datetime.utcnow().strftime(" %H:%M:%S")
     created_time = get_date_in_epoch(body["purchaseDate"], purchase_time)
     group_table.put_item(

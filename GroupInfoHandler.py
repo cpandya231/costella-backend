@@ -6,17 +6,15 @@ from decimal import Decimal
 
 from boto3.dynamodb.conditions import Key, Attr
 
-print('Loading function')
 ddb = boto3.resource('dynamodb')
 hisab_table = ddb.Table("HisabIdentity")
 
 
 def find_by_id(item_id):
-    print(f"Finding User in HisabIdentity using {item_id}")
     response = hisab_table.query(
         KeyConditionExpression=Key('id').eq(item_id)
     )
-    print(f"Got response {response['Items']}")
+
     if len(response["Items"]) > 0:
         return response["Items"][0]
     else:
@@ -52,8 +50,6 @@ def get_group_for_user(payload):
 
 
 def add_user(username):
-    print(f"Adding item to HisabIdentity table using {username}")
-
     hisab_table.put_item(
         Item={
             "id": username,
@@ -86,10 +82,8 @@ def add_user_to_group(group_id, username):
 
 
 def add_group(username):
-    print(f"Adding group to HisabIdentity table using")
-
     group_id = "g_" + str(uuid.uuid4())
-    print(f"Creating group with id {group_id}")
+
     hisab_table.put_item(
         Item={
             "id": group_id,
